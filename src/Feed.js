@@ -1,30 +1,44 @@
-import React from 'react'
+import React ,{ useEffect, useState } from 'react'
 import { Grid, useScrollTrigger, Zoom, Fab  } from '@material-ui/core'
 import InputPost from './Components/InputPost'
 import Post from './Components/Post'
 import { makeStyles } from '@material-ui/core/styles'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-
+import axios from 'axios'
 
 
 export default function Feed(props) {
-    return (
+
+  const [posts, setPosts] = useState([])
+   
+  useEffect(() => {
+     axios.get(`http://192.168.43.149:5000/api`)
+                  .then(res => {
+                    setPosts(res.data)
+                  })
+                  .catch(err =>{
+                    console.log(err)
+                  })  
+  },[posts])
+  
+  const displayPosts =  (
+      <div>
+     { posts.map((post, index) => {
+      return <Post id={post._id} name={post.name} content={post.message} updatedAt={post.updatedAt} />
+    })
+  }
+  </div>
+  )
+
+  return (
         <Grid container direction="column" >
            <Grid item id="back-to-top-anchor">
             <InputPost  />
         </Grid>
 
         <Grid item>
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-            <Post />
-
+              {displayPosts}
+            
         </Grid>
         <ScrollTop {...props}>
         <Fab color="secondary" size="small" aria-label="scroll back to top">
@@ -35,6 +49,8 @@ export default function Feed(props) {
     )
 }
 
+
+//Below part is for the Scoll-to-top button 
 
 const useStyles = makeStyles((theme) => ({
     root: {

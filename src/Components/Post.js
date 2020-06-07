@@ -24,24 +24,35 @@ const useStyles = makeStyles(theme => ({
 
 
 
-export default function Post() {
+export default function Post(props) {
     const classes = useStyles()
+
+    const months = ["January", "February", "March", "April", "May", "June", "July",
+                        "August", "September", "October", "November", "December"]
+
+    const getDate = () => {
+        const date = props.updatedAt.split("T")[0].split("-");
+        const day = date[2]
+        const month = months[parseInt(date[1])]
+        const year = date[0]
+
+        return `${month} ${day} ${year}`
+    }
     return (
         <Card raised className={classes.cardBack} >
             <CardHeader 
                 avatar={
                     <Box border={2} borderRadius="50%" className={classes.avatarBorder}>
-                    <Avatar aria-label="profile-pic">A</Avatar> 
+                    <Avatar aria-label="profile-pic">{props.name[0]}</Avatar> 
                     </Box>
                 }
-                title="User Name"
-                subheader= "May 20 2020"
+                title={props.name}
+                subheader= {getDate()}
             />
 
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
-                This impressive paella is a perfect party dish and a fun meal to cook together with your
-                guests. Add 1 cup of frozen peas along with the mussels, if you like.
+                {props.content}
                 </Typography>
             </CardContent>
 
