@@ -27,11 +27,11 @@ const useStyles = makeStyles(theme => ({
 export default function Post(props) {
     const classes = useStyles()
 
-    const months = ["January", "February", "March", "April", "May", "June", "July",
+    const months = ["Placeholder","January", "February", "March", "April", "May", "June", "July",
                         "August", "September", "October", "November", "December"]
 
     const getDate = () => {
-        const date = props.updatedAt.split("T")[0].split("-");
+        const date = props.createdAt.split("T")[0].split("-");
         const day = date[2]
         const month = months[parseInt(date[1])]
         const year = date[0]

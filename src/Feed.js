@@ -1,6 +1,6 @@
 import React ,{ useEffect, useState } from 'react'
 import { Grid, useScrollTrigger, Zoom, Fab  } from '@material-ui/core'
-import InputPost from './Components/InputPost'
+// import InputPost from './Components/InputPost'
 import Post from './Components/Post'
 import { makeStyles } from '@material-ui/core/styles'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -12,7 +12,7 @@ export default function Feed(props) {
   const [posts, setPosts] = useState([])
    
   useEffect(() => {
-     axios.get(`http://192.168.43.149:5000/api`)
+     axios.get(`https://youpost-api.herokuapp.com/`)
                   .then(res => {
                     setPosts(res.data)
                   })
@@ -24,22 +24,26 @@ export default function Feed(props) {
   const displayPosts =  (
       <div>
      { posts.map((post, index) => {
-      return <Post id={post._id} name={post.name} content={post.message} updatedAt={post.updatedAt} />
+      return <li key={post._id} 
+                 style={{ listStyleType: "none"}}>
+                 <Post  id={post._id} name={post.name} content={post.message} createdAt={post.createdAt} />
+                 </li>
     })
   }
   </div>
   )
 
+  const classes = useStyles()
+
   return (
         <Grid container direction="column" >
            <Grid item id="back-to-top-anchor">
-            <InputPost  />
+            {/* <InputPost  /> */}
         </Grid>
 
-        <Grid item>
+        <Grid item className={classes.gridPadding}>
               {displayPosts}
-            
-        </Grid>
+                      </Grid>
         <ScrollTop {...props}>
         <Fab color="secondary" size="small" aria-label="scroll back to top">
           <KeyboardArrowUpIcon />
@@ -58,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
       bottom: theme.spacing(10),
       right: theme.spacing(4),
     },
+    gridPadding: {
+      paddingBottom: theme.spacing(10)
+    }
   }));
 
 function ScrollTop(props) {

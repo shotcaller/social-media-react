@@ -1,7 +1,8 @@
 import React from 'react'
-import { AppBar, Toolbar, Fab } from '@material-ui/core'
+import { AppBar, Toolbar, Fab, Snackbar } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import AddIcon from '@material-ui/icons/Add'
+import MuiAlert from '@material-ui/lab/Alert';
 import CreatePostDialog from './Components/CreatePostDialog'
 import { useState } from 'react'
 
@@ -18,14 +19,17 @@ const useStyles = makeStyles(theme => ({
         right: 0,
         margin: '0 auto',
       },
-
+      snackBar: {
+        marginBottom : theme.spacing(10)
+      }
 
 }))
 
 export default function Footer() {
 
+  // For Input Dialog Box
     const [addPost, setaddPost] = useState(false)
-
+    
      const handleClick = () => {
             setaddPost(!addPost)
             console.log('clicked')
@@ -35,17 +39,43 @@ export default function Footer() {
         setaddPost(false)
     }
 
+    // For confirmation message
+    const [openConfirmation, setopenConfirmation] = useState(false)
+
+    const isPosted = (confirmation) => {
+      confirmation && setopenConfirmation(true)
+    }
+
+    const closeConfirmation = (event, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+  
+      setopenConfirmation(false);
+    };
+
     const classes = useStyles()
     return (
         <div>
-        <AppBar position="fixed" color="primary" className={classes.appBar} elevation={3}>
+        <Snackbar open={openConfirmation} autoHideDuration={5000} onClose={closeConfirmation} className={classes.snackBar}>
+                  <Alert onClose={closeConfirmation} severity="success">
+                  Post saved!
+                  </Alert>
+              </Snackbar>
+
+        <AppBar position="fixed" color="primary" className={classes.appBar} elevation={3} >
             <Toolbar>
             <Fab color="secondary" aria-label="add" className={classes.fabButton} onClick={handleClick}>
             <AddIcon />
           </Fab>
             </Toolbar>
         </AppBar>
-        <CreatePostDialog dialogToggler={addPost} forceClose={forceClose} />
+        <CreatePostDialog dialogToggler={addPost} forceClose={forceClose} isPosted={isPosted} />
         </div>
     )
+}
+
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
