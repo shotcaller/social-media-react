@@ -18,7 +18,7 @@ export default function Appbar() {
                 <Grid container>
                     <Grid item xs={1} />
                     <Grid item >
-                        <Typography variant="h3" color="textPrimary">YouPost</Typography>
+                        <Typography variant="h3" color="textPrimary">NovoPost</Typography>
                     </Grid>
                 </Grid>
             </Toolbar>
