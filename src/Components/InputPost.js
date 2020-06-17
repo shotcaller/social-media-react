@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme =>({
 
 }))
 
-export default function InputPost() {
+export default function InputPost(props) {
     const classes = useStyles()
     return (
         <Toolbar disableGutters>

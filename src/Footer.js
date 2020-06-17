@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 
 }))
 
-export default function Footer() {
+export default function Footer(props) {
 
   // For Input Dialog Box
     const [addPost, setaddPost] = useState(false)
@@ -70,7 +70,7 @@ export default function Footer() {
           </Fab>
             </Toolbar>
         </AppBar>
-        <CreatePostDialog dialogToggler={addPost} forceClose={forceClose} isPosted={isPosted} />
+        <CreatePostDialog dialogToggler={addPost} forceClose={forceClose} isPosted={isPosted} api={props.api} />
         </div>
     )
 }

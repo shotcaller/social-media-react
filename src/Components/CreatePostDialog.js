@@ -35,7 +35,7 @@ export default function CreatePostDialog(props) {
 
       const handlePostClose = () => {
 
-        axios.post(`https://youpost-api.herokuapp.com/`, { name: newPost.name, message: newPost.post})
+        axios.post(props.api.offline, { name: newPost.name, message: newPost.post})
                     .then(res => {
                       console.log(res)
                       props.isPosted(res)

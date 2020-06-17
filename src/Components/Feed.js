@@ -1,7 +1,7 @@
 import React ,{ useEffect, useState } from 'react'
 import { Grid, useScrollTrigger, Zoom, Fab  } from '@material-ui/core'
 // import InputPost from './Components/InputPost'
-import Post from './Components/Post'
+import Post from './Post'
 import { makeStyles } from '@material-ui/core/styles'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import axios from 'axios'
@@ -12,14 +12,14 @@ export default function Feed(props) {
   const [posts, setPosts] = useState([])
    
   useEffect(() => {
-     axios.get(`https://youpost-api.herokuapp.com/`)
+     axios.get(props.api.offline)
                   .then(res => {
                     setPosts(res.data)
                   })
                   .catch(err =>{
                     console.log(err)
                   })  
-  },[posts])
+  })
   
   const displayPosts =  (
       <div>
