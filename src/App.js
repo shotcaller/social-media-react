@@ -44,7 +44,9 @@ function App() {
       </Grid>
 
       <Grid item>
-        <Footer api={api} />
+      {
+        loggedIn && <Footer api={api} />
+      }
       </Grid>
     </Grid>
   );
