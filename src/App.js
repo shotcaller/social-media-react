@@ -38,7 +38,7 @@ function App() {
               loggedIn && <Feed api= {api} />
             }
             <LoginRegister userOnLogin={userOnLogin} setuserOnLogin={setuserOnLogin} loggedIn={loggedIn} setloggedIn={setloggedIn}
-                          setuser={setuser} />
+                          setuser={setuser} api={api} />
         </Grid>
         <Grid item xs={1} sm={2} md={3} />
       </Grid>

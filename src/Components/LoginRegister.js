@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Typography, Button, Card, CardContent, CardActions, Box, Divider, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import MuiAlert from '@material-ui/lab/Alert';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import { useForm } from 'react-hook-form' 
+import axios from 'axios'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -69,7 +70,7 @@ export default function LoginRegister(props) {
             {
                 props.userOnLogin?
                     <Login setloggedIn={props.setloggedIn} setuserOnLogin={props.setuserOnLogin} />:
-                    <Register setuserOnLogin={props.setuserOnLogin} />
+                    <Register setuserOnLogin={props.setuserOnLogin} api={props.api} />
                     }
         </div>
     )
@@ -126,7 +127,21 @@ export default function LoginRegister(props) {
          password: ''
      })
 
+     const [checkUsername, setcheckUsername] = useState("")
+
+     useEffect(() =>  {
+         
+            axios.post(`${props.api.offline}users/checkuser`, { username: checkUsername})
+                .then(res => {
+                    console.log(res.data)
+                    setregUser({...regUser,"username": checkUsername})
+                })
+                .catch(err => console.log(err))
+
+        },[checkUsername])
+
      const { register, handleSubmit, errors } = useForm()
+
 
      const onSubmit = () => {
         console.log(regUser)
@@ -139,11 +154,6 @@ export default function LoginRegister(props) {
      }
     return (
         <div>
-            {/* <Typography variant="h1" color="textPrimary">Register Page</Typography>
-            <Typography variant="caption" color="textSecondary">Already have an account?</Typography>
-            <Button varaint="contained" color="secondary" onClick={() => props.setuserOnLogin(true)}>Log In</Button>
-            <Button variant="contained" color="primary" >Register</Button> */}
-
             <Card className={classes.root} variant="outlined">
                 <CardContent>
                     <Box display="flex" alignItems="center" flexDirection="column">
@@ -186,7 +196,7 @@ export default function LoginRegister(props) {
                                     color="secondary" 
                                     label="Username"
                                     inputRef={register({required: true})}
-                                    onChange={(e) => updateRegUser("username",e)}
+                                    onChange={(e) => setcheckUsername(e.target.value)}
                                     name="username"
                                     //defaultValue={regUser.username}
                          />
