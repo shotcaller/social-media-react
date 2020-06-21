@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Typography, Button, Card, CardContent, CardActions, Box, Divider, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import MuiAlert from '@material-ui/lab/Alert';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import { useForm } from 'react-hook-form' 
 import axios from 'axios'
+import MuiAlert from '@material-ui/lab/Alert';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,12 +51,11 @@ const useStyles = makeStyles((theme) => ({
     
 }))
 
-
 function Alert(props) {
     const classes = useStyles()
     return <MuiAlert elevation={6} variant="filled" {...props} className={classes.alert} />;
   }
-
+  
 export default function LoginRegister(props) {
 
     if(props.loggedIn) {
@@ -64,14 +63,15 @@ export default function LoginRegister(props) {
     }
 
 
-
     return (
         <div>
             {
                 props.userOnLogin?
-                    <Login setloggedIn={props.setloggedIn} setuserOnLogin={props.setuserOnLogin} />:
-                    <Register setuserOnLogin={props.setuserOnLogin} api={props.api} />
+                    <Login setloggedIn={props.setloggedIn} setuserOnLogin={props.setuserOnLogin} setOpen={props.setOpen} 
+                        api={props.api} setuser={props.setuser} user={props.user} setmsgStatus={props.setmsgStatus} />:
+                    <Register setuserOnLogin={props.setuserOnLogin} api={props.api} setOpen ={props.setOpen} setmsgStatus={props.setmsgStatus} />
                     }
+                   
         </div>
     )
 }
@@ -80,15 +80,47 @@ export default function LoginRegister(props) {
 
  function Login(props) {
 
+    const [ userLogin, setuserLogin ] = useState({
+                                            username: "",
+                                            password: ""
+                                        })
+
+     const { register, handleSubmit, errors } = useForm() 
+
+     const onSubmit = async () => {
+        try {
+         let res = await axios.post(`${props.api}/users/login`, { username : userLogin.username, password: userLogin.password })
+         //console.log(res)
+
+         if(res.status === 200) {
+             console.log("Login successful")
+             props.setuser({...props.user,
+                            "id": res.data._id,
+                            "name": res.data.name,
+                            "email": res.data.email,
+                            "username": res.data.username})
+                    
+            props.setmsgStatus(2)
+            props.setOpen(true)
+            props.setloggedIn(true)
+
+
+         }
+        } catch (err) {
+            props.setmsgStatus(3)
+            props.setOpen(true)
+            console.log('Login Failed', err)
+        }
+
+     }
+
+     const updateLoginUser = (name,e) => {
+        setuserLogin({...userLogin, [name]: e.target.value})
+     }
+
     const classes = useStyles()
     return (
         <div>
-            {/* <Typography variant="h1" color="textPrimary">Login Page</Typography>
-            <Button varaint="contained" color="secondary" onClick={() => props.setloggedIn(true)}>Log In</Button>
-            <Typography variant="caption" color="textSecondary">Don't have an account?</Typography>
-            <Button variant="contained" color="primary" onClick={() => props.setuserOnLogin(false)} >Register</Button>
-        
-             */}
         <Card className={classes.root} variant="outlined">
             <CardContent>
              <Box display="flex" alignItems="center" flexDirection="column">
@@ -97,10 +129,30 @@ export default function LoginRegister(props) {
             Login
             </Typography>
              <Divider variant="middle" className={classes.divider}  />
-             <form>
+             <form onSubmit={handleSubmit(() => onSubmit())}>
+             { errors.username && <Alert severity="error">{errors.username.message}</Alert>}
+             { errors.password && <Alert severity="error">{errors.password.message}</Alert>}
                 <Box display="flex" alignItems="center" flexDirection="column">
-                 <TextField type="text" className={classes.textfield} size="normal" variant="outlined" color="secondary" label="Username"/>
-                 <TextField type="password" className={classes.textfield} size="normal" variant="outlined" color="secondary" label="Password"/>
+                 <TextField type="text" 
+                            className={classes.textfield} 
+                            size="medium" 
+                            variant="outlined" 
+                            color="secondary" 
+                            label="Username"
+                            name="username"
+                            onChange={(e) => updateLoginUser("username",e)}
+                            inputRef={register({ required: "Username is required!" })}
+                            />
+                 <TextField type="password" 
+                            className={classes.textfield} 
+                            size="medium" 
+                            variant="outlined" 
+                            color="secondary" 
+                            label="Password"
+                            name="password"
+                            onChange={(e) => updateLoginUser("password",e)}
+                            inputRef={register({ required: "Password is required!"})}    
+                            />
                  <Button className={classes.submitButton} type="submit" fullWidth variant="contained" color="secondary">Login</Button>
                  </Box>
              </form>
@@ -127,25 +179,29 @@ export default function LoginRegister(props) {
          password: ''
      })
 
-     const [checkUsername, setcheckUsername] = useState("")
-
-     useEffect(() =>  {
-         
-            axios.post(`${props.api.offline}users/checkuser`, { username: checkUsername})
-                .then(res => {
-                    console.log(res.data)
-                    setregUser({...regUser,"username": checkUsername})
-                })
-                .catch(err => console.log(err))
-
-        },[checkUsername])
 
      const { register, handleSubmit, errors } = useForm()
 
+     const checkUsername = async (username) => {
+         try {
+         let res = await axios.post(`${props.api}/users/checkuser`, { username: username})
+         return !res.data
+        }
+        catch(err) {
+            console.log(err)
+        }
+     }
 
-     const onSubmit = () => {
-        console.log(regUser)
+     const onSubmit = async () => {
+        try{
+         await axios.post(`${props.api}/users/register`, { user: regUser})
+         props.setmsgStatus(1)
+        props.setOpen(true)
         props.setuserOnLogin(true)
+        }
+        catch(err) {
+            console.log(err)
+        }
      }
 
      const updateRegUser = (name,e) => {
@@ -162,52 +218,55 @@ export default function LoginRegister(props) {
                             Register
                         </Typography>   
                          <Divider variant="middle" className={classes.divider}  />
-                         <form onSubmit={handleSubmit(onSubmit)}>
+                         <form onSubmit={handleSubmit(() => onSubmit())}>
                         <Box display="flex"  alignItems="center" flexDirection="column">
-                        { errors.name && <Alert severity="error">Name is required!</Alert> }
-                        { errors.username && <Alert severity="error">Username is required!</Alert> }
-                        { errors.email && <Alert severity="error">Email is required!</Alert> }
-                        { errors.password && <Alert severity="error">Password must be minimum 8 characters and maximum 20 characters!</Alert>}
+                        { errors.name && <Alert severity="error">{errors.name.message}</Alert> }
+                        { errors.username && errors.username.type ==="validate" &&  <Alert severity="error">Username already exists!</Alert>}
+                        { errors.email && <Alert severity="error">{errors.email.message}</Alert> }
+                        { errors.password &&  <Alert severity="error">{errors.password.message}</Alert>}
                          <TextField type="text"
                                     className={classes.textfield} 
-                                    size="normal" variant="outlined" 
+                                    size="medium" variant="outlined" 
                                     color="secondary" 
                                     label="Name"
                                     name="name"
-                                    inputRef={register({required: true})}
+                                    inputRef={register({required: "Name is required!"})}
                                     onChange={(e) => updateRegUser("name",e)}
                                     //defaultValue={regUser.name}
                          />
                          <TextField type="email" 
                                     className={classes.textfield} 
-                                    size="normal" 
+                                    size="medium" 
                                     variant="outlined" 
                                     color="secondary" 
                                     label="Email"
                                     name="email"
-                                    inputRef={register({required: true})}
+                                    inputRef={register({required: "Email is required!"})}
                                     onChange={(e) => updateRegUser("email",e)}
                                     //defaultValue={regUser.email}
                          />
                          <TextField type="text"  
                                     className={classes.textfield} 
-                                    size="normal" 
+                                    size="medium" 
                                     variant="outlined" 
                                     color="secondary" 
                                     label="Username"
-                                    inputRef={register({required: true})}
-                                    onChange={(e) => setcheckUsername(e.target.value)}
+                                    defaultValue={regUser.username}
+                                    onChange={(e) => updateRegUser("username",e)}
+                                    inputRef={register({required: "Username is required!",
+                                     validate: checkUsername })}
                                     name="username"
-                                    //defaultValue={regUser.username}
+                                   
                          />
                          <TextField type="password" 
                                     className={classes.textfield} 
-                                    size="normal" 
+                                    size="medium" 
                                     variant="outlined" 
                                     color="secondary" 
                                     label="Password"
                                     name="password"
-                                    inputRef={register({required: true,  minLength: 8, maxLength: 20})}
+                                    inputRef={register({required: "Password is required!", 
+                                    minLength: { value: 8, message: "Password should be minimum 8 characters long."}})}
                                     onChange={(e) => updateRegUser("password",e)}
 
                          />
@@ -224,8 +283,7 @@ export default function LoginRegister(props) {
         <Button className={classes.registerOptions} size="small" onClick={() => props.setuserOnLogin(true)}>Login</Button>
         </Box>
       </CardActions>
-
-            </Card>
+            </Card> 
         </div>
     )
 }

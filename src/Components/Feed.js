@@ -12,7 +12,7 @@ export default function Feed(props) {
   const [posts, setPosts] = useState([])
    
   useEffect(() => {
-     axios.get(props.api.offline)
+     axios.get(props.api)
                   .then(res => {
                     setPosts(res.data)
                   })
