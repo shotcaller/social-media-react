@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Card, CardHeader, CardContent, CardActions, Avatar, IconButton, Typography, Box } from '@material-ui/core'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+import axios from 'axios'
 
 const useStyles = makeStyles(theme => ({
     cardBack: {
@@ -27,6 +28,13 @@ const useStyles = makeStyles(theme => ({
 export default function Post(props) {
     const classes = useStyles()
 
+    const [name,  setname] = useState("")
+    useEffect(() => {
+        axios.get(`${props.api}/users/getname/${props.username}`)
+                .then(name => setname(name.data))
+                .catch(err => console.log(err))
+    },[props.username,props.api])
+
     const months = ["Placeholder","January", "February", "March", "April", "May", "June", "July",
                         "August", "September", "October", "November", "December"]
 
@@ -38,16 +46,17 @@ export default function Post(props) {
 
         return `${month} ${day} ${year}`
     }
+
     return (
         <Card raised className={classes.cardBack} >
             <CardHeader 
                 avatar={
                     <Box border={2} borderRadius="50%" className={classes.avatarBorder}>
-                    <Avatar aria-label="profile-pic">{props.name[0]}</Avatar> 
+                    <Avatar aria-label="profile-pic">{props.username[0].toUpperCase()}</Avatar> 
                     </Box>
                 }
-                title={props.name}
-                subheader= {getDate()}
+                title={props.username}
+                subheader= {`${getDate()} by ${name}`}
             />
 
             <CardContent>

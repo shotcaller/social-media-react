@@ -3,8 +3,8 @@ import Appbar from './Components/Appbar'
 
 
 
-export default function Header() {
+export default function Header(props) {
     return (
-        <Appbar />
+        <Appbar loggedIn={props.loggedIn} setloggedIn={props.setloggedIn} />
     )
 }

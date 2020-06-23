@@ -1,6 +1,6 @@
 import React ,{ useEffect, useState } from 'react'
 import { Grid, useScrollTrigger, Zoom, Fab  } from '@material-ui/core'
-// import InputPost from './Components/InputPost'
+import InputPost from './InputPost'
 import Post from './Post'
 import { makeStyles } from '@material-ui/core/styles'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -9,24 +9,29 @@ import axios from 'axios'
 
 export default function Feed(props) {
 
+  
   const [posts, setPosts] = useState([])
    
   useEffect(() => {
      axios.get(props.api)
                   .then(res => {
                     setPosts(res.data)
+                    console.log(res.data)
+                  
                   })
                   .catch(err =>{
                     console.log(err)
                   })  
-  })
+                
+  },[props.posted,props.api])
   
   const displayPosts =  (
       <div>
      { posts.map((post, index) => {
       return <li key={post._id} 
                  style={{ listStyleType: "none"}}>
-                 <Post  id={post._id} name={post.name} content={post.message} createdAt={post.createdAt} />
+                 <Post  id={post._id} username={post.username} content={post.message}
+                        createdAt={post.createdAt} name={props.name} api={props.api} />
                  </li>
     })
   }
@@ -38,7 +43,7 @@ export default function Feed(props) {
   return (
         <Grid container direction="column" >
            <Grid item id="back-to-top-anchor">
-            {/* <InputPost  /> */}
+             <InputPost name={props.name} />
         </Grid>
 
         <Grid item className={classes.gridPadding}>

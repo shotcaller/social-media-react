@@ -70,7 +70,8 @@ export default function Footer(props) {
           </Fab>
             </Toolbar>
         </AppBar>
-        <CreatePostDialog dialogToggler={addPost} forceClose={forceClose} isPosted={isPosted} api={props.api} />
+        <CreatePostDialog dialogToggler={addPost} forceClose={forceClose} 
+          isPosted={isPosted} api={props.api} setPosted={props.setPosted} posted={props.posted} username={props.username} />
         </div>
     )
 }
