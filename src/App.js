@@ -57,12 +57,12 @@ function App() {
         <Grid item xs={10} sm={8} md={6}>
             {
               loggedIn && <React.Suspense fallback={<LinearProgress color="primary"/>}>
-                            <Feed api= {api.offline} posted={posted} setLiked={setLiked} liked={liked}
+                            <Feed api= {api.online} posted={posted} setLiked={setLiked} liked={liked}
                                         currentName={user.name} currentUsername={user.username} /></React.Suspense>
             }
             <LoginRegister userOnLogin={userOnLogin} setuserOnLogin={setuserOnLogin} 
                           loggedIn={loggedIn} setloggedIn={setloggedIn}
-                          setuser={setuser} api={api.offline} user={user} 
+                          setuser={setuser} api={api.online} user={user} 
                           setmsgStatus={setmsgStatus} open={open} 
                           setOpen={setOpen} handleClose={handleClose} />
              <Snackbar anchorOrigin={{ vertical:'top', horizontal: 'center' }} 
@@ -76,7 +76,7 @@ function App() {
 
       <Grid item>
       {
-        loggedIn && <Footer api={api.offline} setPosted={setPosted} posted={posted} username={user.username} />
+        loggedIn && <Footer api={api.online} setPosted={setPosted} posted={posted} username={user.username} />
       }
       </Grid>
     </Grid>
