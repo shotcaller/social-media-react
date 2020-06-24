@@ -42,6 +42,7 @@ export default function Post(props) {
         checkLike()        
 
     })
+    const [disabled, setdisabled] = useState(false)
 
     const checkLike = async() => {
         let res =  await axios.put(`${props.api}/post/checklike`, { username: props.currentUsername, postId: props.id })
@@ -68,8 +69,9 @@ export default function Post(props) {
     }
 
     const likePost = async () => {
+        setdisabled(true)
         let res =  await axios.put(`${props.api}/post/like`, { username: props.currentUsername, postId: props.id })
-
+        setdisabled(false)
         //console.log(res.data)
         props.setLiked(!props.liked)
     }
@@ -93,7 +95,7 @@ export default function Post(props) {
             </CardContent>
 
             <CardActions>
-            <IconButton aria-label="like" onClick={likePost}>
+            <IconButton aria-label="like" onClick={likePost} disabled={disabled}>
           <ThumbUpIcon className={likeColor?classes.iconsLiked:classes.iconsUnliked} />
         </IconButton>
         <Typography variant="caption" color="textSecondary" className={classes.likeMargin}>{props.like}</Typography>
