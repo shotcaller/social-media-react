@@ -56,7 +56,7 @@ function App() {
         <Grid item xs={1} sm={2} md={3} />
         <Grid item xs={10} sm={8} md={6}>
             {
-              loggedIn && <React.Suspense fallback={<LinearProgress color="primary"/>}>
+              loggedIn && <React.Suspense fallback={<Loading />}>
                             <Feed api= {api.online} posted={posted} setLiked={setLiked} liked={liked}
                                         currentName={user.name} currentUsername={user.username} /></React.Suspense>
             }
