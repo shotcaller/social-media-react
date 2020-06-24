@@ -9,7 +9,7 @@ const LoginRegister = React.lazy(() => import('./Components/LoginRegister'))
 const Footer = React.lazy(() => import('./Footer'))
 
 const api = {
-  online: "https://youpost-api.herokuapp.com/",
+  online: "https://youpost-api.herokuapp.com",
   offline: "http://localhost:5000"
 }
 
