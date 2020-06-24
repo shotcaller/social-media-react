@@ -93,7 +93,7 @@ export default function LoginRegister(props) {
          //console.log(res)
 
          if(res.status === 200) {
-             console.log("Login successful")
+             //console.log("Login successful")
              props.setuser({...props.user,
                             "id": res.data._id,
                             "name": res.data.name,

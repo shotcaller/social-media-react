@@ -16,22 +16,23 @@ export default function Feed(props) {
      axios.get(props.api)
                   .then(res => {
                     setPosts(res.data)
-                    console.log(res.data)
+                    //console.log(res.data)
                   
                   })
                   .catch(err =>{
                     console.log(err)
                   })  
                 
-  },[props.posted,props.api])
+  },[props.posted,props.api,props.liked])
   
   const displayPosts =  (
       <div>
      { posts.map((post, index) => {
       return <li key={post._id} 
                  style={{ listStyleType: "none"}}>
-                 <Post  id={post._id} username={post.username} content={post.message}
-                        createdAt={post.createdAt} name={props.name} api={props.api} />
+                 <Post  id={post._id} username={post.username} content={post.message} currentUsername={props.currentUsername}
+                        createdAt={post.createdAt} currentName={props.currentName} liked={props.liked}
+                        api={props.api} setLiked={props.setLiked} like={post.like} />
                  </li>
     })
   }
@@ -43,7 +44,7 @@ export default function Feed(props) {
   return (
         <Grid container direction="column" >
            <Grid item id="back-to-top-anchor">
-             <InputPost name={props.name} />
+             <InputPost currentName={props.currentName} />
         </Grid>
 
         <Grid item className={classes.gridPadding}>

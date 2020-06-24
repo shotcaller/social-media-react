@@ -34,7 +34,7 @@ export default function CreatePostDialog(props) {
     const [open, setOpen] = useState(false)
     useEffect(() => {
         setOpen(toggler)
-        console.log(toggler)
+        //console.log(toggler)
     },[toggler])
 
     //Handling post form 
@@ -56,7 +56,7 @@ export default function CreatePostDialog(props) {
 
         axios.post(props.api, { username: newPost.username, message: newPost.post})
                     .then(res => {
-                      console.log(res)
+                      //console.log(res)
                       props.isPosted(res)
                       props.setPosted(!props.posted)
                     })

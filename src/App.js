@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Grid, Snackbar, LinearProgress } from '@material-ui/core';
-import Header from "./Header"
-import LoginRegister from "./Components/LoginRegister"
-import Footer from "./Footer"
 import MuiAlert from '@material-ui/lab/Alert';
+import Loading from './Components/Loading'
 
 const Feed = React.lazy(() => import('./Components/Feed'))
+const Header = React.lazy(() => import('./Header'))
+const LoginRegister = React.lazy(() => import('./Components/LoginRegister'))
+const Footer = React.lazy(() => import('./Footer'))
 
 const api = {
   online: "https://youpost-api.herokuapp.com/",
@@ -37,6 +38,7 @@ function App() {
     const [msgStatus, setmsgStatus] = useState(0)
 
     const [posted, setPosted] = useState(false)
+    const [liked, setLiked] = useState(false)
     
     const regSuccess = <Alert severity="success" onClose={handleClose}>Registeration Successful!</Alert>
     const logSuccess = <Alert severity="success" onClose={handleClose}>Login Successful!</Alert>
@@ -44,6 +46,7 @@ function App() {
 
 
   return (
+    <React.Suspense fallback={<Loading />}>
     <Grid container direction="column">
       <Grid item>
         <Header loggedIn={loggedIn} setloggedIn={setloggedIn}  />
@@ -54,7 +57,8 @@ function App() {
         <Grid item xs={10} sm={8} md={6}>
             {
               loggedIn && <React.Suspense fallback={<LinearProgress color="primary"/>}>
-                            <Feed api= {api.offline} posted={posted} name={user.name}  /></React.Suspense>
+                            <Feed api= {api.offline} posted={posted} setLiked={setLiked} liked={liked}
+                                        currentName={user.name} currentUsername={user.username} /></React.Suspense>
             }
             <LoginRegister userOnLogin={userOnLogin} setuserOnLogin={setuserOnLogin} 
                           loggedIn={loggedIn} setloggedIn={setloggedIn}
@@ -76,6 +80,7 @@ function App() {
       }
       </Grid>
     </Grid>
+    </React.Suspense>
   );
 }
 

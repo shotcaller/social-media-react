@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Card, CardHeader, CardContent, CardActions, Avatar, IconButton, Typography, Box } from '@material-ui/core'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
+//import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import axios from 'axios'
 
 const useStyles = makeStyles(theme => ({
@@ -19,8 +19,10 @@ const useStyles = makeStyles(theme => ({
     },
     avatarBorder: {
         borderColor: '#66fcf1'
+    },
+    likeMargin: {
+        marginRight: 20
     }
-
 }))
 
 
@@ -35,6 +37,17 @@ export default function Post(props) {
                 .catch(err => console.log(err))
     },[props.username,props.api])
 
+    const [likeColor, setlikeColor] = useState(false)
+    useEffect(() => {
+        checkLike()        
+
+    })
+
+    const checkLike = async() => {
+        let res =  await axios.put(`${props.api}/post/checklike`, { username: props.currentUsername, postId: props.id })
+        setlikeColor(res.data)
+    }
+
     const months = ["Placeholder","January", "February", "March", "April", "May", "June", "July",
                         "August", "September", "October", "November", "December"]
 
@@ -47,6 +60,20 @@ export default function Post(props) {
         return `${month} ${day} ${year}`
     }
 
+    const replaceYou = () => {
+        if (name === props.currentName){
+            return 'YOU'
+        }
+        else return name
+    }
+
+    const likePost = async () => {
+        let res =  await axios.put(`${props.api}/post/like`, { username: props.currentUsername, postId: props.id })
+
+        //console.log(res.data)
+        props.setLiked(!props.liked)
+    }
+
     return (
         <Card raised className={classes.cardBack} >
             <CardHeader 
@@ -56,7 +83,7 @@ export default function Post(props) {
                     </Box>
                 }
                 title={props.username}
-                subheader= {`${getDate()} by ${name}`}
+                subheader= {`${getDate()} by ${replaceYou()}`}
             />
 
             <CardContent>
@@ -66,12 +93,13 @@ export default function Post(props) {
             </CardContent>
 
             <CardActions>
-            <IconButton aria-label="like">
-          <ThumbUpIcon className={classes.iconsUnliked} />
+            <IconButton aria-label="like" onClick={likePost}>
+          <ThumbUpIcon className={likeColor?classes.iconsLiked:classes.iconsUnliked} />
         </IconButton>
-        <IconButton aria-label="comment">
+        <Typography variant="caption" color="textSecondary" className={classes.likeMargin}>{props.like}</Typography>
+        {/* <IconButton aria-label="comment" disabled >
           <ChatBubbleOutlineIcon className={classes.iconsUnliked} />
-        </IconButton>
+        </IconButton> */}
             </CardActions>    
         </Card>
     )
